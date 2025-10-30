@@ -1,0 +1,9 @@
+DirectoryIndex index.php login.html index.html
+Options +FollowSymLinks -Indexes
+<IfModule mod_authz_core.c>
+    Require all granted
+</IfModule>
+<FilesMatch "\.(txt|json|log)$">
+    Order deny,allow
+    Deny from all
+</FilesMatch>

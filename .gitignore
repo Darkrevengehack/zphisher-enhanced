@@ -1,0 +1,50 @@
+# Zphisher - Archivos a ignorar
+
+# Logs y datos capturados
+auth/*.txt
+auth/*.dat
+logs/*.log
+.server/.cld.log
+.server/.lhr.log
+.server/.serveo.log
+.server/.loclx
+
+# Backups y temporales
+*.backup
+*.backup-*
+.temp_backup/
+.github_prep/
+
+# Datos sensibles
+usernames.txt
+ip.txt
+auth/usernames.dat
+auth/ip.txt
+
+# Sistema
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Scripts de desarrollo (opcional - descomenta si no quieres incluirlos)
+# autopatch_v3.py
+# optimize_final.py
+# fix_*.py
+# *_fixes.sh
+
+# Node modules si se agregan en el futuro
+node_modules/
+
+# Archivos de editor
+.vscode/
+.idea/
+*.sublime-*
