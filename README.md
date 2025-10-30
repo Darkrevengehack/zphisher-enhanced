@@ -334,9 +334,9 @@ Termux community
 Tunnel providers: Serveo, Cloudflared, LocalXpose
 
 📞 Links
-This Fork (Enhanced): [YOUR-GITHUB-URL]
+This Fork (Enhanced): https://github.com/Darkrevengehack
 Original Project: github.com/htr-tech/zphisher
-Report Issues (Enhanced features): [Your Issues Page]
+Report Issues (Enhanced features): https://github.com/Darkrevengehack/zphisher-enhanced/issues
 Report Issues (Original features): htr-tech Issues
 
 🔗 Find Original Author:
