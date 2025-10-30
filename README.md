@@ -142,7 +142,7 @@ It only demonstrates "how phishing works". <b>You shall not misuse the informati
 
 ```bash
 # Clone this fork
-git clone --depth=1 https://github.com/[YOUR-USERNAME]/zphisher-enhanced.git
+git clone --depth=1 https://github.com/Darkrevengehack/zphisher-enhanced.git
 
 # Navigate to directory
 cd zphisher-enhanced
@@ -160,7 +160,7 @@ pkg update && pkg upgrade -y
 pkg install git php curl openssh -y
 
 # Clone this enhanced fork
-git clone --depth=1 https://github.com/[YOUR-USERNAME]/zphisher-enhanced.git
+git clone --depth=1 https://github.com/Darkrevengehack/zphisher-enhanced.git
 cd zphisher-enhanced
 bash zphisher.sh
 ⚠️ A Note :
@@ -172,7 +172,7 @@ sudo apt update
 sudo apt install git php curl openssh-client -y
 
 # Clone and run
-git clone --depth=1 https://github.com/[YOUR-USERNAME]/zphisher-enhanced.git
+git clone --depth=1 https://github.com/Darkrevengehack/zphisher-enhanced.git
 cd zphisher-enhanced
 bash zphisher.sh
 
