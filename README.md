@@ -66,11 +66,11 @@ This version fixes **critical bugs** that prevented the original from working pr
 ╔═══════════════════════════════════════════════════╗
 ║  🎯 VICTIM CAPTURED - 2025-11-02 04:05:35       ║
 ╚═══════════════════════════════════════════════════╝
-🌐 IP Address : 190.172.41.62
-🌍 Location   : San Martín, Mendoza, Argentina (AR)
-🏢 ISP        : Telefonica de Argentina
-📍 Coordinates: -33.0653, -68.4712
-🕐 Timezone   : America/Argentina/Mendoza
+🌐 IP Address : ******
+🌍 Location   : ******
+🏢 ISP        : ******
+📍 Coordinates: ******
+🕐 Timezone   : ******
 💻 Device     : Mobile
 🖥️  OS         : Android 10
 🌐 Browser    : Chrome
