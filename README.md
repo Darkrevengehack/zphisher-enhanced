@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Version-2.3.5--Enhanced-green?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Version-2.3.5--Enhanced--v2-green?style=for-the-badge">
   <img src="https://img.shields.io/badge/Fork%20of-htr--tech/zphisher-blue?style=for-the-badge">
   <img src="https://img.shields.io/badge/Platform-Termux%20%7C%20Linux-orange?style=for-the-badge">
   <img src="https://img.shields.io/github/license/htr-tech/zphisher?style=for-the-badge">
@@ -24,43 +24,63 @@
 
 <p align="center">
 <b>This is an enhanced fork of the original <a href="https://github.com/htr-tech/zphisher">Zphisher</a> by <a href="https://github.com/htr-tech">htr-tech</a></b><br>
-<i>Optimized tunneling • Advanced geolocation • 44+ templates • Improved stability</i>
+<i>Fixed critical bugs • Advanced geolocation • 44+ templates • Production-ready</i>
 </p>
 
 ##
 
-### 🆚 What's Different in this Fork?
+### 🆚 What's NEW in Enhanced Edition v2?
 
-This Enhanced Edition adds significant improvements while maintaining full compatibility with the original Zphisher:
+This version fixes **critical bugs** that prevented the original from working properly:
+
+#### 🐛 Critical Fixes (Nov 2025)
+
+**❌ BUGS FIXED:**
+- ✅ **"404 Not Found" Error** - Added missing `index.html` to all 44 templates
+- ✅ **IP Not Captured** - Fixed `ip.php` not being called by login pages
+- ✅ **Empty IP Display** - Fixed IP parsing in Termux output
+- ✅ **File Conflicts** - Templates now clean properly between uses
+- ✅ **Android Compatibility** - Better Cloudflared handling on Termux
+
+**🎯 These were BREAKING BUGS affecting all users who cloned the original repo.**
 
 #### ✨ Enhanced Features
 
-**🌐 Optimized Tunneling System**
-- ✅ **Serveo Integration** - New stable tunnel (unlimited, recommended)
-- ⚡ **Improved Cloudflared** - Better compatibility with Android/Termux
-- 🔄 **LocalXpose Support** - Alternative tunnel option
-- 🛡️ **Smart PHP Verification** - Automatic server health checks
-- 📊 **Better Error Handling** - Helpful suggestions when tunnels fail
+**📍 Advanced Geolocation (9 Data Points)**
+- 🌍 Country, Region, City
+- 🏢 ISP + Organization name
+- 📍 GPS Coordinates (lat/lon)
+- 🕐 Timezone detection
+- 💻 Device type (Mobile/Tablet/Desktop)
+- 🖥️ OS with version (Android 10, iOS 17, Windows 11, etc.)
+- 🌐 Browser detection (Chrome, Firefox, Safari, Edge)
+- 🔗 Referer + Full User-Agent
 
-**📍 Advanced Data Capture**
-- 🌍 **Enhanced Geolocation** - Country, City, ISP detection
-- ⏰ **Timestamp Logging** - Precise capture times
-- 🌐 **User-Agent Tracking** - Device/browser information
-- 📝 **Structured Format** - Better organized captured data
+**🌐 Improved Tunneling**
+- ⭐ **Serveo with Status Check** - Real-time online/offline detection
+- ⚡ **LocalXpose with Warning** - Clear 15-minute limit notification
+- 🛡️ **Cloudflared Android Warning** - Explicit compatibility notice
+- 🧹 **Auto-cleanup** - Prevents file mixing between templates
 
-**🔧 Stability Improvements**
-- ✅ **Fixed Forbidden Errors** - .htaccess in all 44 templates
-- 🚀 **Optimized Wait Times** - 12-18 seconds based on tunnel
-- 💾 **Process Management** - Better SSH/PHP handling
-- 🔄 **Automatic Recovery** - Fallback mechanisms
-
+**📊 Better Data Capture Format**
+╔═══════════════════════════════════════════════════╗
+║  🎯 VICTIM CAPTURED - 2025-11-02 04:05:35       ║
+╚═══════════════════════════════════════════════════╝
+🌐 IP Address : 190.172.41.62
+🌍 Location   : San Martín, Mendoza, Argentina (AR)
+🏢 ISP        : Telefonica de Argentina
+📍 Coordinates: -33.0653, -68.4712
+🕐 Timezone   : America/Argentina/Mendoza
+💻 Device     : Mobile
+🖥️  OS         : Android 10
+🌐 Browser    : Chrome
 **🎯 Tunnel Comparison**
 
 | Tunnel | Status | Speed | Limit | Notes |
 |--------|--------|-------|-------|-------|
-| **Serveo** ⭐ | ✅ Excellent | Fast | Unlimited | **New in Enhanced** - Most reliable |
-| LocalXpose | ✅ Good | Medium | 15 min free | Alternative option |
-| Cloudflared | ⚠️ Variable | Fast | Unlimited | Improved compatibility |
+| **Serveo** ⭐ | ✅ Excellent | Fast | Unlimited | Status check included |
+| LocalXpose | ✅ Good | Medium | 15 min free | Warning shown |
+| Cloudflared | ⚠️ Variable | Fast | Unlimited | Android warning |
 | Localhost | ✅ Perfect | Very Fast | LAN only | Testing purposes |
 
 ##
@@ -141,7 +161,7 @@ It only demonstrates "how phishing works". <b>You shall not misuse the informati
 #### Quick Install (Termux/Linux)
 
 ```bash
-# Clone this fork
+# Clone this WORKING fork (bugs fixed)
 git clone --depth=1 https://github.com/Darkrevengehack/zphisher-enhanced.git
 
 # Navigate to directory
@@ -149,9 +169,8 @@ cd zphisher-enhanced
 
 # Run Zphisher
 bash zphisher.sh
-Or install original version:
+Or install original version (with known bugs):
 git clone --depth=1 https://github.com/htr-tech/zphisher.git
-
 📱 Installation (Termux)
 # Update packages
 pkg update && pkg upgrade -y
@@ -163,9 +182,8 @@ pkg install git php curl openssh -y
 git clone --depth=1 https://github.com/Darkrevengehack/zphisher-enhanced.git
 cd zphisher-enhanced
 bash zphisher.sh
-⚠️ A Note :
-Termux discourages hacking .. So never discuss anything related to zphisher in any of the termux discussion groups. For more check : wiki
-
+⚠️ A Note:
+Termux discourages hacking. Never discuss anything related to zphisher in Termux groups. For more: wiki
 🐧 Installation (Linux)
 # Install dependencies
 sudo apt update
@@ -176,12 +194,6 @@ git clone --depth=1 https://github.com/Darkrevengehack/zphisher-enhanced.git
 cd zphisher-enhanced
 bash zphisher.sh
 
-🐳 Run on Docker
-Original Docker Images:
-DockerHub: docker pull htrtech/zphisher
-GHCR: docker pull ghcr.io/htr-tech/zphisher:latest
-Note: Docker images are from the original project. This fork adds enhancements to the tunneling system which work in standard installations.
-
 📖 Usage
 Recommended Workflow (Enhanced)
 Start Zphisher
@@ -189,51 +201,34 @@ cd zphisher-enhanced
 bash zphisher.sh
 Choose Template (e.g., Instagram → Traditional)
 Select Tunnel (Recommendations):
-🥇 Option 02 - Serveo (Recommended for this fork)
-🥈 Option 03 - LocalXpose (Backup option)
-🥉 Option 04 - Cloudflared (If others fail)
+🥇 Option 02 - Serveo (Best - Recommended)
+🥈 Option 03 - LocalXpose (Backup - 15min limit)
+🥉 Option 04 - Cloudflared (May fail on Android)
 Copy Generated URL and share it
 Monitor Captures in real-time
-Enhanced Output Example
-[-] Initializing... ( http://127.0.0.1:8080 )
-
-[-] Verifying PHP server... ✓ OK
-
-[-] Launching Serveo...
-[✓] Tunnel established successfully!
-
+Enhanced Output Example:
 [-] URL 1 : https://abc123.serveo.net
-[-] URL 2 : https://tinyurl.com/xyz123
-[-] URL 3 : https://get-free-followers@tinyurl.com/xyz123
 
 [-] Waiting for Login Info, Ctrl + C to exit...
 
 [-] Victim IP Found !
-[-] Victim's IP : 203.0.113.42
-[-] Country: United States | City: New York | ISP: Example ISP
+[-] Victim's IP : 190.172.41.62
 [-] Saved in : auth/ip.txt
+Data captured in auth/ip.txt:
+Full geolocation (Country, City, ISP)
+Device info (Mobile/Desktop, OS, Browser)
+GPS coordinates + Timezone
+Complete User-Agent
 
-[-] Login info Found !!
-[-] Account : victim@example.com
-[-] Password : ********
-[-] Saved in : auth/usernames.dat
-
-�
 🔧 Dependencies
-
-
 Required:
 git
 curl
 php (7.4+)
-openssh-client (for Serveo tunnel in Enhanced edition)
+openssh-client (for Serveo tunnel)
 All dependencies are installed automatically on first run.
-�
 
-�
 ✅ Tested on
-
-
 Enhanced Edition tested on:
 ✅ Termux (Android 10, 11, 12, 13, 14)
 ✅ Ubuntu (20.04, 22.04, 24.04)
@@ -243,73 +238,55 @@ Enhanced Edition tested on:
 ✅ Fedora
 Original Zphisher also works on:
 Manjaro, Other Debian-based distros
-�
 
-�
 🐛 Troubleshooting (Enhanced Edition)
+Problem: "404 Not Found" when opening URL
+Fixed in v2 ✅ All templates now include index.html
+Problem: IP not captured
+Fixed in v2 ✅ All login.html now call ip.php correctly
+Problem: IP shows empty in Termux
+Fixed in v2 ✅ Log format now compatible with capture_ip()
+Cloudflared doesn't work on Android
+Solution: Use Serveo (Option 02) - Better compatibility
+LocalXpose disconnects after 15 minutes
+Expected: Free tier limitation. Upgrade or use Serveo.
 
-
-Cloudflared doesn't work
-Symptom: Check internet connection...
-Solution: This fork adds Serveo specifically for this issue
-# Select Option 02 (Serveo) instead
-# More compatible with Android/Termux
-PHP verification fails
-Solution: Enhanced edition auto-restarts PHP
-# If manual restart needed:
-killall php
-bash zphisher.sh
-Tunnel keeps disconnecting
-Solutions:
-✅ Use Serveo (most stable in this fork)
-Keep Termux in foreground
-Stable internet connection required
-LocalXpose free = 15 min limit
-All templates return Forbidden
-Solution: Fixed in Enhanced Edition - all 44 templates include .htaccess
-�
-
-
-🆚 Enhanced vs Original
+🆚 Enhanced v2 vs Original
 Feature
 Original v2.3.5
-This Fork (Enhanced)
+This Fork (Enhanced v2)
 Templates
 30
 44
-Serveo Tunnel
-❌
-✅ New & Recommended
-PHP Verification
-❌
-✅ Automatic
+index.html
+❌ Missing (404 error)
+✅ All templates
+IP Tracking
+❌ Broken
+✅ Fixed + Enhanced
 Geolocation
 Basic IP
-📍 Country/City/ISP
+📍 9 data points
+Serveo Status
+❌
+✅ Real-time check
 Error Handling
 Basic
-🛡️ Comprehensive + Suggestions
-Cloudflared
-Sometimes fails
-⚡ Improved compatibility
-.htaccess Fix
-Manual
-✅ All templates
-Wait Times
-8-12 sec
-⏱️ Optimized 12-18 sec
-Process Handling
-Basic
-🚀 Advanced (setsid)
+🛡️ Comprehensive
+Warnings
+❌
+✅ LocalXpose/Cloudflared
+Auto-cleanup
+❌
+✅ Prevents file mixing
 
 🤝 Contributing
-To This Fork
-Contributions to the Enhanced Edition are welcome!
+To This Fork:
 Report issues specific to enhancements
-Suggest new tunnel integrations
+Suggest new features
 Improve documentation
-To Original Project
-For original Zphisher features, contribute to: htr-tech/zphisher
+To Original Project:
+For original Zphisher features: htr-tech/zphisher
 
 📜 License
 GPL-3.0 License - Same as original project
@@ -318,58 +295,36 @@ This is a fork and derivative work of Zphisher by htr-tech, licensed under GPL-3
 👏 Credits
 🌟 Original Zphisher
 Author: htr-tech (Tahmid Rayat)
-Original Repository: htr-tech/zphisher
+Repository: htr-tech/zphisher
 License: GPL-3.0
 Please ⭐ star the original repository too!
-✨ Enhanced Edition
+✨ Enhanced Edition v2
 Fork & Enhancements: Darkrevengehack (2025)
-Major Additions:
-Serveo tunnel integration
-Advanced geolocation system
-Improved error handling & stability
-44 templates with .htaccess fixes
-🙏 Special Thanks
-Original Zphisher team and all contributors
+Major Fixes:
+Added missing index.html to all templates
+Fixed IP tracking system
+Fixed geolocation capture
+Improved tunnel reliability
+Better error messages
+🙏 Special Thanks:
+Original Zphisher team and contributors
+Users who reported the bugs
 Termux community
 Tunnel providers: Serveo, Cloudflared, LocalXpose
 
 📞 Links
-This Fork (Enhanced): https://github.com/Darkrevengehack
+This Fork (Enhanced): github.com/Darkrevengehack/zphisher-enhanced
 Original Project: github.com/htr-tech/zphisher
-Report Issues (Enhanced features): https://github.com/Darkrevengehack/zphisher-enhanced/issues
-Report Issues (Original features): htr-tech Issues
+Report Issues (Enhanced): Issues
 
-🔗 Find Original Author:
-�
-￼ ￼ 
-
-
-
-💝 Thanks to Original Contributors:
-�
-￼
-1RaY-1￼
-Aditya Shakya￼
-Ali Milani￼
-AmnesiA￼
-KasRoudra￼
-Moises Tapia￼
-Mr.Derek￼
-Mustakim Ahmed￼
-sepp0￼
-TripleHat￼
-Yisus7u7
+💝 Thanks to Original Contributors
+[List maintained from original project]
 
 �
-⭐ If you find this enhanced fork useful, please star both this repo and the original project! ⭐ 
+⭐ If you find this enhanced fork useful, please star both this repo and the original! ⭐ 
 
 
 �
 Fork maintained with ❤️ for the cybersecurity community
 Built upon the excellent work of htr-tech 
-
-
-�
-
-�
 
