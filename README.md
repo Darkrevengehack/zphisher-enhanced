@@ -48,14 +48,15 @@ This version fixes **critical bugs** that prevented the original from working pr
 #### ✨ Enhanced Features (v2.1)
 
 **📍 Advanced Geolocation (9 Data Points)**
+**📍 Advanced Geolocation (9 Data Points)**
 ╔═══════════════════════════════════════════════════╗
-║  🎯 VICTIM CAPTURED - 2025-11-10 23:45:12       ║
+║  🎯 VICTIM CAPTURED - 2025-11-10 14:23:45       ║
 ╚═══════════════════════════════════════════════════╝
-🌐 IP Address : ******
-🌍 Location   : ******
-🏢 ISP        : ******
-📍 Coordinates: ******
-🕐 Timezone   : ******
+🌐 IP Address : 203.0.113.45
+🌍 Location   : New York, NY, United States (US)
+🏢 ISP        : Example Telecom Inc.
+📍 Coordinates: 40.7128, -74.0060
+🕐 Timezone   : America/New_York
 💻 Device     : Mobile
 🖥️  OS         : Android 13
 🌐 Browser    : Chrome Mobile
