@@ -81,6 +81,12 @@ This version fixes **critical bugs** that prevented the original from working pr
 
 [... rest of your README content ...]
 
+Installing: git clone https://github.com/Darkrevengehack/zphisher-enhanced.git
+cd zphisher-enhanced
+bash zphisher.sh
+
+Install with a single command: https://github.com/Darkrevengehack/zphisher-enhanced.git && cd zphisher-enhanced && bash zphisher.sh
+
 ### 🔧 Enhanced Features Summary
 
 **✅ What Works Better:**
